@@ -16,6 +16,9 @@ import id.my.agungdh.nat1_website_api.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +41,8 @@ public class ChatService {
             You are a helpful blog assistant. You can help users find blog posts, list categories and tags.
             Use the available tools to answer user questions about the blog content.
             Always respond in the same language as the user's question.
-            When listing posts, include title, slug, excerpt, and published date.
+            Always respond in markdown format with proper headings, lists, bold, and links where appropriate.
+            Keep responses concise and well-structured.
             """;
 
     private static final List<Map<String, Object>> TOOLS = List.of(
@@ -123,40 +127,44 @@ public class ChatService {
         }
     }
 
+    private static final DateTimeFormatter DATE_FMT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"));
+
     private String postsToString(List<Post> posts) {
         var sb = new StringBuilder();
         for (int i = 0; i < posts.size(); i++) {
             Post post = posts.get(i);
-            sb.append(i + 1).append(". **").append(post.getTitle()).append("**\n");
-            sb.append("   Slug: ").append(post.getSlug()).append("\n");
-            if (post.getExcerpt() != null) {
-                sb.append("   Excerpt: ").append(post.getExcerpt()).append("\n");
-            }
-            if (post.getPublishedAt() != null) {
-                sb.append("   Published: ").append(post.getPublishedAt()).append("\n");
-            }
+            sb.append(i + 1).append(". **").append(post.getTitle()).append("**");
             if (post.getCategory() != null) {
-                sb.append("   Category: ").append(post.getCategory().getName()).append("\n");
+                sb.append(" `").append(post.getCategory().getName()).append("`");
             }
             sb.append("\n");
+            if (post.getExcerpt() != null) {
+                sb.append("   > ").append(post.getExcerpt()).append("\n");
+            }
+            sb.append("   Slug: `").append(post.getSlug()).append("`");
+            if (post.getPublishedAt() != null) {
+                sb.append(" | Published: ").append(DATE_FMT.format(Instant.ofEpochMilli(post.getPublishedAt())));
+            }
+            sb.append("\n\n");
         }
         if (posts.isEmpty()) {
-            sb.append("No posts found.");
+            sb.append("*No posts found.*");
         }
         return sb.toString();
     }
 
     private String postToFullString(Post post) {
         var sb = new StringBuilder();
-        sb.append("Title: ").append(post.getTitle()).append("\n");
-        sb.append("Slug: ").append(post.getSlug()).append("\n");
+        sb.append("# ").append(post.getTitle()).append("\n\n");
         if (post.getCategory() != null) {
-            sb.append("Category: ").append(post.getCategory().getName()).append("\n");
+            sb.append("**Category:** ").append(post.getCategory().getName()).append("\n");
         }
         if (post.getPublishedAt() != null) {
-            sb.append("Published: ").append(post.getPublishedAt()).append("\n");
+            sb.append("**Published:** ").append(DATE_FMT.format(Instant.ofEpochMilli(post.getPublishedAt()))).append("\n");
         }
-        sb.append("\n").append(post.getContent());
+        sb.append("**Slug:** `").append(post.getSlug()).append("`\n\n---\n\n");
+        sb.append(post.getContent());
         return sb.toString();
     }
 
