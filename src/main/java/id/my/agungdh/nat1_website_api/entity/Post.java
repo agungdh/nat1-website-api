@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -16,7 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.Set;
 
 @Entity
-@Table(name = "post", indexes = @Index(name = "idx_post_uuid", columnList = "uuid"))
+@Table(name = "post")
 @SQLRestriction("deleted_at IS NULL")
 public class Post extends BaseEntity {
 

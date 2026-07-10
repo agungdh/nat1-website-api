@@ -2,7 +2,6 @@ package id.my.agungdh.nat1_website_api.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -11,7 +10,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.Set;
 
 @Entity
-@Table(name = "tag", indexes = @Index(name = "idx_tag_uuid", columnList = "uuid"))
+@Table(name = "tag")
 @SQLRestriction("deleted_at IS NULL")
 public class Tag extends BaseEntity {
 
