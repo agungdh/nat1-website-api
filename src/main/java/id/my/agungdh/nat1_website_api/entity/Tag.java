@@ -5,6 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Set;
@@ -12,6 +17,9 @@ import java.util.Set;
 @Entity
 @Table(name = "tag")
 @SQLRestriction("deleted_at IS NULL")
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends BaseEntity {
 
     @Column(nullable = false, unique = true)
@@ -22,28 +30,4 @@ public class Tag extends BaseEntity {
 
     @ManyToMany(mappedBy = "tags")
     private Set<Post> posts;
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
 }

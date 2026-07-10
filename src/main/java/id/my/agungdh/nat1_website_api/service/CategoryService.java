@@ -3,20 +3,17 @@ package id.my.agungdh.nat1_website_api.service;
 import id.my.agungdh.nat1_website_api.dto.CategoryDto;
 import id.my.agungdh.nat1_website_api.mapper.CategoryMapper;
 import id.my.agungdh.nat1_website_api.repository.CategoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
-
-    public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
-        this.categoryRepository = categoryRepository;
-        this.categoryMapper = categoryMapper;
-    }
 
     public List<CategoryDto> findAll() {
         return categoryMapper.toDtoList(categoryRepository.findAll());
