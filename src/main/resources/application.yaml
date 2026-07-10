@@ -20,6 +20,8 @@ spring:
     enabled: true
 
 app:
+  scheduler:
+    interval-ms: 300000
   ai:
     base-url:
     api-key:

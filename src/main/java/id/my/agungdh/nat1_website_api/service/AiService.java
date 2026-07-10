@@ -29,6 +29,17 @@ public class AiService {
     }
 
     @SuppressWarnings("unchecked")
+    public String generate(String systemPrompt, String userPrompt) {
+        List<Map<String, Object>> messages = List.of(
+                Map.of("role", "system", "content", systemPrompt),
+                Map.of("role", "user", "content", userPrompt)
+        );
+
+        Map<String, Object> message = chat(messages, null);
+        return (String) message.getOrDefault("content", "");
+    }
+
+    @SuppressWarnings("unchecked")
     public Map<String, Object> chat(List<Map<String, Object>> messages, List<Map<String, Object>> tools) {
         Map<String, Object> body = new java.util.HashMap<>();
         body.put("model", model);
