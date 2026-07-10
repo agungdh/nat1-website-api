@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: nat1_website_api
