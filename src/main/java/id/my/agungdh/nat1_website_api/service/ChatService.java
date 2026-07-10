@@ -10,6 +10,7 @@ import id.my.agungdh.nat1_website_api.repository.CategoryRepository;
 import id.my.agungdh.nat1_website_api.repository.PostRepository;
 import id.my.agungdh.nat1_website_api.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,7 +22,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
-@RequiredArgsConstructor
 public class ChatService {
 
     private final AiService aiService;
@@ -30,6 +30,23 @@ public class ChatService {
     private final TagRepository tagRepository;
     private final CategoryMapper categoryMapper;
     private final TagMapper tagMapper;
+    private final String baseUrl;
+    private final String postPath;
+
+    public ChatService(AiService aiService, PostRepository postRepository,
+                       CategoryRepository categoryRepository, TagRepository tagRepository,
+                       CategoryMapper categoryMapper, TagMapper tagMapper,
+                       @Value("${app.site.base-url:}") String baseUrl,
+                       @Value("${app.site.post-path:/posts}") String postPath) {
+        this.aiService = aiService;
+        this.postRepository = postRepository;
+        this.categoryRepository = categoryRepository;
+        this.tagRepository = tagRepository;
+        this.categoryMapper = categoryMapper;
+        this.tagMapper = tagMapper;
+        this.baseUrl = baseUrl;
+        this.postPath = postPath;
+    }
 
     private static final DateTimeFormatter DATE_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withZone(ZoneId.of("UTC"));
@@ -64,6 +81,11 @@ public class ChatService {
                 Keep responses concise and well-structured.
                 
                 """);
+
+        if (baseUrl != null && !baseUrl.isBlank()) {
+            sb.append("The blog is hosted at: **").append(baseUrl).append(postPath).append("/{slug}**\n");
+            sb.append("Use this URL pattern when linking to posts: `").append(baseUrl).append(postPath).append("/[slug]`\n\n");
+        }
 
         var m = FULL_QUERY.matcher(lastMsg);
         if (m.find()) {
@@ -121,7 +143,8 @@ public class ChatService {
     private String postsToList(List<Post> posts) {
         var sb = new StringBuilder();
         for (var post : posts) {
-            sb.append("- **").append(post.getTitle()).append("**");
+            sb.append("- **[").append(post.getTitle()).append("](")
+                    .append(baseUrl).append(postPath).append("/").append(post.getSlug()).append(")**");
             if (post.getCategory() != null) {
                 sb.append(" `").append(post.getCategory().getName()).append("`");
             }

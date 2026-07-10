@@ -20,6 +20,9 @@ spring:
     enabled: true
 
 app:
+  site:
+    base-url: http://localhost:4321
+    post-path: /blog
   scheduler:
     interval-ms: 120000
   ai:
