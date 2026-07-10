@@ -18,3 +18,9 @@ spring:
     show-sql: true
   flyway:
     enabled: true
+
+app:
+  ai:
+    base-url:
+    api-key:
+    model:
