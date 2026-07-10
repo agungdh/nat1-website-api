@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -39,7 +40,7 @@ public class PostGeneratorService {
             Respond ONLY with a valid JSON object, no other text.
             """;
 
-    private static final String USER_PROMPT = """
+    private static final String USER_PROMPT_TEMPLATE = """
             Generate a new tech blog post. Return a JSON object with this exact structure:
             {
               "title": "Post title",
@@ -54,7 +55,9 @@ public class PostGeneratorService {
             - Slug must be lowercase, use hyphens, no special characters
             - Content must be at least 3 paragraphs with code examples
             - Include 2-4 relevant tags
-            - Vary the topics each time
+            
+            IMPORTANT: Generate a post on a COMPLETELY DIFFERENT topic from these existing posts:
+            %s
             """;
 
     @Transactional
@@ -62,11 +65,28 @@ public class PostGeneratorService {
     public void generatePost() {
         try {
             log.info("Generating new blog post...");
-            String json = aiService.generate(SYSTEM_PROMPT, USER_PROMPT);
+
+            List<String> existingTitles = postRepository.findAll()
+                    .stream()
+                    .map(Post::getTitle)
+                    .toList();
+
+            String avoid = existingTitles.isEmpty()
+                    ? "(no existing posts, any topic is fine)"
+                    : String.join("\n", existingTitles.stream().map(t -> "- " + t).toList());
+
+            String userPrompt = String.format(USER_PROMPT_TEMPLATE, avoid);
+            String json = aiService.generate(SYSTEM_PROMPT, userPrompt);
 
             String cleaned = extractJson(json);
             Map<String, Object> data = objectMapper.readValue(cleaned,
                     new TypeReference<Map<String, Object>>() {});
+
+            String slug = (String) data.get("slug");
+            if (slug != null && postRepository.findBySlug(slug).isPresent()) {
+                slug = slug + "-" + System.currentTimeMillis() % 10000;
+                data.put("slug", slug);
+            }
 
             Post post = createPost(data);
             log.info("Generated post: {} (slug: {})", post.getTitle(), post.getSlug());
