@@ -65,10 +65,7 @@ public class PostGeneratorService {
         try {
             log.info("Generating new blog post...");
 
-            List<String> existingTitles = postRepository.findAll()
-                    .stream()
-                    .map(Post::getTitle)
-                    .toList();
+            List<String> existingTitles = postRepository.findAllTitles();
 
             String avoid = existingTitles.isEmpty()
                     ? "(no existing posts, any topic is fine)"
