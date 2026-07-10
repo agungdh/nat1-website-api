@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -82,12 +81,6 @@ public class PostGeneratorService {
             Map<String, Object> data = objectMapper.readValue(cleaned,
                     new TypeReference<Map<String, Object>>() {});
 
-            String slug = (String) data.get("slug");
-            if (slug != null && postRepository.findBySlug(slug).isPresent()) {
-                slug = slug + "-" + System.currentTimeMillis() % 10000;
-                data.put("slug", slug);
-            }
-
             Post post = createPost(data);
             log.info("Generated post: {} (slug: {})", post.getTitle(), post.getSlug());
         } catch (Exception e) {
@@ -107,11 +100,30 @@ public class PostGeneratorService {
         return trimmed;
     }
 
+    private String resolveSlug(String slug, String title) {
+        if (slug != null && !slug.isBlank()) {
+            return postRepository.findBySlug(slug).isPresent()
+                    ? slug + "-" + System.currentTimeMillis() % 10000
+                    : slug;
+        }
+        String generated = title.toLowerCase()
+                .replaceAll("[^a-z0-9\\s-]", "")
+                .replaceAll("\\s+", "-")
+                .replaceAll("-+", "-")
+                .replaceAll("^-|-$", "");
+        if (generated.isEmpty()) {
+            generated = "post-" + System.currentTimeMillis() % 100000;
+        }
+        return postRepository.findBySlug(generated).isPresent()
+                ? generated + "-" + System.currentTimeMillis() % 10000
+                : generated;
+    }
+
     @SuppressWarnings("unchecked")
     private Post createPost(Map<String, Object> data) {
         Post post = new Post();
         post.setTitle((String) data.get("title"));
-        post.setSlug((String) data.get("slug"));
+        post.setSlug(resolveSlug((String) data.get("slug"), post.getTitle()));
         post.setContent((String) data.get("content"));
         post.setExcerpt((String) data.get("excerpt"));
         post.setStatus(PostStatus.PUBLISHED);
