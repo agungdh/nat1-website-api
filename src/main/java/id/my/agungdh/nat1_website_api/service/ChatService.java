@@ -3,6 +3,7 @@ package id.my.agungdh.nat1_website_api.service;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import id.my.agungdh.nat1_website_api.dto.CategoryDto;
+import id.my.agungdh.nat1_website_api.dto.ChatMessage;
 import id.my.agungdh.nat1_website_api.dto.PostDto;
 import id.my.agungdh.nat1_website_api.dto.TagDto;
 import id.my.agungdh.nat1_website_api.entity.Post;
@@ -54,10 +55,13 @@ public class ChatService {
     );
 
     @SuppressWarnings("unchecked")
-    public String chat(String userMessage) {
+    public String chat(List<ChatMessage> history) {
         List<Map<String, Object>> messages = new ArrayList<>();
         messages.add(Map.of("role", "system", "content", SYSTEM_PROMPT));
-        messages.add(Map.of("role", "user", "content", userMessage));
+
+        for (ChatMessage m : history) {
+            messages.add(Map.of("role", m.role(), "content", m.content()));
+        }
 
         Map<String, Object> message = aiService.chat(messages, TOOLS);
 
