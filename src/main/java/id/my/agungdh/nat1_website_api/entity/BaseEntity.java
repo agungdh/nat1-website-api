@@ -1,7 +1,6 @@
 package id.my.agungdh.nat1_website_api.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,12 +11,7 @@ import jakarta.persistence.PreUpdate;
 import java.time.Instant;
 import java.util.UUID;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
     @Id
@@ -31,14 +25,12 @@ public abstract class BaseEntity {
     private Long createdAt;
 
     @Column
-    @CreatedBy
     private Long createdBy;
 
     @Column
     private Long updatedAt;
 
     @Column
-    @LastModifiedBy
     private Long updatedBy;
 
     @Column
