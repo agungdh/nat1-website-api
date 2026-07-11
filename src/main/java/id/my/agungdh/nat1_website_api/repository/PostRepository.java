@@ -28,6 +28,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = {"category", "tags"})
     List<Post> searchByContent(@Param("query") String query);
 
+    @EntityGraph(attributePaths = {"category", "tags"})
+    @Query(value = "SELECT p FROM Post p WHERE p.category.slug = :categorySlug",
+            countQuery = "SELECT count(p) FROM Post p WHERE p.category.slug = :categorySlug")
+    Page<Post> findAllByCategorySlug(@Param("categorySlug") String categorySlug, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"category", "tags"})
+    @Query(value = "SELECT DISTINCT p FROM Post p JOIN p.tags t WHERE t.slug = :tagSlug",
+            countQuery = "SELECT count(DISTINCT p) FROM Post p JOIN p.tags t WHERE t.slug = :tagSlug")
+    Page<Post> findAllByTagSlug(@Param("tagSlug") String tagSlug, Pageable pageable);
+
     @Query("SELECT p.title FROM Post p")
     List<String> findAllTitles();
 }

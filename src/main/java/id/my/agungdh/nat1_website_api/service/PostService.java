@@ -41,4 +41,30 @@ public class PostService {
                 .map(postMapper::toDto)
                 .orElse(null);
     }
+
+    public PagedResponse<PostDto> findAllByCategorySlug(String categorySlug, Pageable pageable) {
+        Page<Post> page = postRepository.findAllByCategorySlug(categorySlug, pageable);
+        return new PagedResponse<>(
+                postMapper.toDtoList(page.getContent()),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
+    }
+
+    public PagedResponse<PostDto> findAllByTagSlug(String tagSlug, Pageable pageable) {
+        Page<Post> page = postRepository.findAllByTagSlug(tagSlug, pageable);
+        return new PagedResponse<>(
+                postMapper.toDtoList(page.getContent()),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
+    }
 }
