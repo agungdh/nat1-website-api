@@ -1,12 +1,14 @@
 package id.my.agungdh.nat1_website_api.service;
 
+import id.my.agungdh.nat1_website_api.dto.PagedResponse;
 import id.my.agungdh.nat1_website_api.dto.PostDto;
+import id.my.agungdh.nat1_website_api.entity.Post;
 import id.my.agungdh.nat1_website_api.mapper.PostMapper;
 import id.my.agungdh.nat1_website_api.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,8 +17,17 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
 
-    public List<PostDto> findAll() {
-        return postMapper.toDtoList(postRepository.findAll());
+    public PagedResponse<PostDto> findAll(Pageable pageable) {
+        Page<Post> page = postRepository.findAll(pageable);
+        return new PagedResponse<>(
+                postMapper.toDtoList(page.getContent()),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast()
+        );
     }
 
     public PostDto findByUuid(String uuid) {
