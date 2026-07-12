@@ -1,4 +1,12 @@
 services:
+  valkey:
+    image: valkey/valkey:latest
+    container_name: valkey
+    restart: always
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - valkey_data:/data
   adminer:
     image: adminer
     restart: always
@@ -31,4 +39,5 @@ services:
     depends_on:
       - postgres
 volumes:
+  valkey_data:
   postgres_data:
