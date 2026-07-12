@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
 
-    @PostMapping("/chat")
+    @PostMapping
     public ChatResponse chat(@RequestBody ChatRequest request) {
         String reply = chatService.chat(request.messages());
         return new ChatResponse(reply);
