@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.Set;
 
 @Entity
-@Table(name = "tag")
+@Table(name = "tags")
 @SQLRestriction("deleted_at IS NULL")
 @Getter
 @Setter

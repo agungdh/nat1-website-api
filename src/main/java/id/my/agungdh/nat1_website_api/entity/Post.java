@@ -19,7 +19,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.Set;
 
 @Entity
-@Table(name = "post")
+@Table(name = "posts")
 @SQLRestriction("deleted_at IS NULL")
 @Getter
 @Setter
@@ -54,7 +54,7 @@ public class Post extends BaseEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "post_tags",
+            name = "posts_tags",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )

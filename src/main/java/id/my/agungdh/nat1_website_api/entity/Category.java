@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.List;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 @SQLRestriction("deleted_at IS NULL")
 @Getter
 @Setter
