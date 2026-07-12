@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain adminFilterChain(HttpSecurity http, TokenAuthFilter tokenAuthFilter) throws Exception {
         http
-                .securityMatcher("/admin/**")
+                .securityMatcher("/api/admin/**")
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
