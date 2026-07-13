@@ -23,6 +23,8 @@ spring:
       host: localhost
 
 app:
+  cors:
+    allowed-origins: https://admin.agungdh.my.id
   auth:
     expiration-ms: 86400000
     cookie:
