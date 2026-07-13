@@ -29,4 +29,8 @@ public class AuthService {
         String token = tokenService.generateToken(user.getUsername());
         return new AuthResponse(token);
     }
+
+    public void logout(String token) {
+        tokenService.removeToken(token);
+    }
 }

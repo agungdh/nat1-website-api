@@ -25,6 +25,9 @@ spring:
 app:
   auth:
     expiration-ms: 86400000
+    cookie:
+      secure: true
+      same-site: Strict
   site:
     base-url: http://localhost:4321
     post-path: /blog

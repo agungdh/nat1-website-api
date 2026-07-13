@@ -29,4 +29,8 @@ public class TokenService {
     public Optional<String> getUsername(String token) {
         return Optional.ofNullable(redisTemplate.opsForValue().get(TOKEN_PREFIX + token));
     }
+
+    public void removeToken(String token) {
+        redisTemplate.delete(TOKEN_PREFIX + token);
+    }
 }
